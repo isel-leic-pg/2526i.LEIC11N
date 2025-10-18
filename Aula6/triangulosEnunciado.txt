@@ -1,0 +1,12 @@
+/* Triangle.kt
+    Escreva um programa que classifica um triângulo dado o comprimento de cada lado.
+    O programa deve executar as seguintes ações:
+    1. Questionar o utilizador sobre o lado A, B e C (Valor Inteiro)
+    2. Apresentar uma das quatro possíveis classificações do triângulo no formato:
+           O triângulo é <Impossível|Equilátero|Isósceles|Escaleno>
+		   Equilátero: todos os lados são iguais
+		   Isósceles: tem 2 lados iguais
+		   Impossível: quando tem números negativos ou a+b<=c ou a+c<=b ou b+c<=a
+    3. Caso o triângulo seja retângulo (isósceles ou escaleno) apresentar também:
+           O triângulo é retângulo
+ */
