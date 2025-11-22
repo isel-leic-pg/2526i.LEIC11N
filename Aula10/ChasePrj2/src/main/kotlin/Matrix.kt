@@ -4,53 +4,38 @@ const val IMG_SIZE = 64
 const val GRID_WIDTH = 11
 const val GRID_HEIGHT = 7
 
-data class Position(val x: Int, val y: Int)
-
-fun Canvas.drawHero(position:Position) {
-    drawImage("hero|48,0,48,48", position.x * IMG_SIZE, position.y * IMG_SIZE, IMG_SIZE, IMG_SIZE)
-}
-
 fun main() {
     println("start main")
     onStart {
         val canvas = Canvas(IMG_SIZE*GRID_WIDTH, IMG_SIZE*GRID_HEIGHT, BLACK)
         println("start canvas")
-        var position = Position(GRID_WIDTH/2, GRID_HEIGHT/2)
-        canvas.drawGrid()
-        canvas.drawHero(position)
+        var hero = Hero(Position(GRID_WIDTH/2, GRID_HEIGHT/2), Direction.DOWN)
 
-       /* val keyhandler = { k:KeyEvent -> canvas.erase()} //função lambda
-        canvas.onKeyPressed(keyhandler)
-        canvas.onKeyPressed { //lambda }
-*/
+        drawHero(canvas, hero)
+
         canvas.onKeyPressed { key ->
-            /*when {
-                key.char == 'a' -> { ....}
-            }*/
-            /*position = when(key.code) {
-                LEFT_CODE -> Position(position.x-1, position.y)
-                RIGHT_CODE -> Position(position.x+1, position.y)
-                UP_CODE -> Position(position.x, position.y-1)
-                DOWN_CODE -> Position(position.x, position.y+1)
-                else -> position
-            }*/
-            position = when {
-                key.code == LEFT_CODE && position.x-1 >= 0 -> Position(position.x-1, position.y)
-                key.code == RIGHT_CODE && position.x*IMG_SIZE + IMG_SIZE + 1 < GRID_WIDTH*IMG_SIZE -> Position(position.x+1, position.y)
-                key.code == UP_CODE -> Position(position.x, position.y-1)
-                key.code == DOWN_CODE -> Position(position.x, position.y+1)
-                else -> position
+            val cell = when {
+                //Pair(Cell(max(p.position.row - 1, 0), p.position.col), Directions.UP)
+                key.code == LEFT_CODE && hero.position.x-1 >= 0 -> Pair(Position(hero.position.x-1, hero.position.y), Direction.LEFT)
+                key.code == RIGHT_CODE && hero.position.x*IMG_SIZE + IMG_SIZE + 1 < GRID_WIDTH*IMG_SIZE -> Pair(Position(hero.position.x+1, hero.position.y), Direction.RIGHT)
+                key.code == UP_CODE && hero.position.y-1 >= 0 -> Pair(Position(hero.position.x, hero.position.y-1), Direction.UP)
+                key.code == DOWN_CODE && hero.position.y * IMG_SIZE + IMG_SIZE + 1 < GRID_HEIGHT*IMG_SIZE -> Pair(Position(hero.position.x, hero.position.y+1), Direction.DOWN)
+                else -> Pair(hero.position, hero.direction)
             }
-
-            canvas.erase()
-            canvas.drawGrid()
-            canvas.drawHero(position)
+            hero = Hero(cell.first, cell.second)
+            drawHero(canvas, hero)
         }
     }
     onFinish {
         println("end canvas")
     }
     println("end main")
+}
+
+fun drawHero(canvas: Canvas, hero: Hero) {
+    canvas.erase()
+    canvas.drawGrid()
+    canvas.drawHeroSprite(hero)
 }
 
 fun Canvas.drawGrid() {
@@ -60,4 +45,14 @@ fun Canvas.drawGrid() {
     (IMG_SIZE..height step IMG_SIZE).forEach {
         drawLine(0, it, width, it, WHITE, 1)
     }
+}
+
+/*
+fun Canvas.drawHero(position:Position) {
+    drawImage("hero|48,0,48,48", position.x * IMG_SIZE, position.y * IMG_SIZE, IMG_SIZE, IMG_SIZE)
+}*/
+
+fun Canvas.drawHeroSprite(hero:Hero) {
+    //48,0,48,48 ----> x,y,w,h
+    drawImage(hero.getSprite(), hero.position.x * IMG_SIZE, hero.position.y * IMG_SIZE, IMG_SIZE, IMG_SIZE)
 }
